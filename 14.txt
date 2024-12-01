@@ -1,0 +1,16 @@
+14 
+
+
+import numpy as np
+import pandas as pd
+
+data = pd.read_csv(r"C:\Users\bhush\OneDrive\Desktop\Dataset\Covid Vaccine Statewise.csv")
+
+print(data.head())
+print(data.describe())
+
+males_vaccinated = data['Male(Individuals Vaccinated)'].sum()
+print(males_vaccinated)
+
+females_vaccinated = data['Female(Individuals Vaccinated)'].sum()
+print(females_vaccinated)

@@ -1,0 +1,27 @@
+19
+
+
+
+
+import pandas as pd
+df = pd.read_csv(r"C:\Users\bhush\OneDrive\Desktop\Dataset\IRIS.csv")
+df.head()
+unique_categories = df['species'].unique()
+print("Unique categories:", unique_categories)
+
+# Count the number of unique categories
+num_categories = df['species'].nunique()
+print("Number of categories:", num_categories)
+grouped = df.groupby('species')
+grouped.describe()
+for species, data in grouped:
+    print(f"Species: {species}")
+    print(data.describe())  # Provides mean, std, min, percentiles, and max
+    print("\n")
+for species, data in grouped:
+  p = 0.25
+  print(f'For {p*100} is : ',df.groupby('species').quantile(p))
+for species,data in grouped:
+    print(f'Species : ' ,{species})
+    print(df.groupby('species').mean())
+    print('\n')

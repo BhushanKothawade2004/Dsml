@@ -1,0 +1,153 @@
+4
+
+
+import pandas as pd
+
+# Step 1: Load the dataset
+path = r"C:\Users\bhush\OneDrive\Desktop\Dataset\Lipstick.csv"
+lipstick_data = pd.read_csv(path)
+
+# Step 2: Define functions for Gini impurity and splitting
+def gini_impurity(data):
+    """Calculate the Gini impurity for a dataset."""
+    total = len(data)
+    class_counts = data['Buys'].value_counts()
+    
+    gini = 1 - sum((count / total) ** 2 for count in class_counts)
+    return gini
+
+def split_data(data, feature, value):
+    """Split the dataset based on a feature value."""
+    left_split = data[data[feature] == value]
+    right_split = data[data[feature] != value]
+    return left_split, right_split
+
+def weighted_gini(data, feature):
+    """Calculate the weighted Gini impurity for all splits of a given feature."""
+    gini_values = {}
+    unique_values = data[feature].unique()
+    
+    for value in unique_values:
+        left_split, right_split = split_data(data, feature, value)
+        
+        # Calculate Gini for each split
+        left_gini = gini_impurity(left_split)
+        right_gini = gini_impurity(right_split)
+        
+        # Calculate weighted Gini
+        total = len(data)
+        weighted_gini_value = (len(left_split) / total) * left_gini + (len(right_split) / total) * right_gini
+        gini_values[value] = weighted_gini_value
+    
+    return gini_values
+
+def find_best_split(data):
+    """Find the best feature to split on by minimizing Gini impurity."""
+    features = ['Age', 'Income', 'Gender', 'Ms']
+    best_feature = None
+    best_gini = float('inf')
+    
+    for feature in features:
+        gini_values = weighted_gini(data, feature)
+        
+        # Find the best split (lowest Gini impurity)
+        for value, gini in gini_values.items():
+            if gini < best_gini:
+                best_gini = gini
+                best_feature = feature
+    
+    return best_feature, best_gini
+
+# Step 3: Build the decision tree (start by finding the root)
+root_feature, root_gini = find_best_split(lipstick_data)
+
+# Step 4: Display the root node and its Gini index
+print(f"Root Node: {root_feature} with Gini Index: {root_gini}")
+
+
+
+
+or (with img)
+
+
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+
+# Step 1: Load the dataset
+path = r"C:\Users\bhush\OneDrive\Desktop\Dataset\Lipstick.csv"
+lipstick_data = pd.read_csv(path)
+
+# Step 2: Preprocess the data
+# Encode categorical variables
+encoders = {}
+for column in lipstick_data.columns:
+    if lipstick_data[column].dtype == 'object':
+        encoder = LabelEncoder()
+        lipstick_data[column] = encoder.fit_transform(lipstick_data[column])
+        encoders[column] = encoder
+
+# Separate features and target
+X = lipstick_data[['Age', 'Income', 'Gender', 'Ms']]
+y = lipstick_data['Buys']
+
+# Step 3: Train a decision tree classifier
+clf = DecisionTreeClassifier(criterion='gini', random_state=0)
+clf.fit(X, y)
+
+# Step 4: Define functions for custom Gini impurity and splitting
+def gini_impurity(data):
+    """Calculate the Gini impurity for a dataset."""
+    total = len(data)
+    class_counts = data['Buys'].value_counts()
+    gini = 1 - sum((count / total) ** 2 for count in class_counts)
+    return gini
+
+def split_data(data, feature, value):
+    """Split the dataset based on a feature value."""
+    left_split = data[data[feature] == value]
+    right_split = data[data[feature] != value]
+    return left_split, right_split
+
+def weighted_gini(data, feature):
+    """Calculate the weighted Gini impurity for all splits of a given feature."""
+    gini_values = {}
+    unique_values = data[feature].unique()
+    for value in unique_values:
+        left_split, right_split = split_data(data, feature, value)
+        left_gini = gini_impurity(left_split)
+        right_gini = gini_impurity(right_split)
+        total = len(data)
+        weighted_gini_value = (len(left_split) / total) * left_gini + (len(right_split) / total) * right_gini
+        gini_values[value] = weighted_gini_value
+    return gini_values
+
+def find_best_split(data):
+    """Find the best feature to split on by minimizing Gini impurity."""
+    features = ['Age', 'Income', 'Gender', 'Ms']
+    best_feature = None
+    best_gini = float('inf')
+    for feature in features:
+        gini_values = weighted_gini(data, feature)
+        for value, gini in gini_values.items():
+            if gini < best_gini:
+                best_gini = gini
+                best_feature = feature
+    return best_feature, best_gini
+
+# Step 5: Use the custom logic to find the root
+root_feature, root_gini = find_best_split(lipstick_data)
+print(f"Root Node (Custom Logic): {root_feature} with Gini Index: {root_gini}")
+
+# Step 6: Display the decision tree
+tree_rules = export_text(clf, feature_names=['Age', 'Income', 'Gender', 'Ms'])
+print("\nDecision Tree Rules (scikit-learn):")
+print(tree_rules)
+
+# Step 7: Plot the decision tree
+plt.figure(figsize=(10, 8))
+plot_tree(clf, feature_names=['Age', 'Income', 'Gender', 'Ms'], class_names=encoders['Buys'].classes_, filled=True)
+plt.title("Decision Tree")
+plt.show()
+

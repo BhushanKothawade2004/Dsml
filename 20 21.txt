@@ -1,0 +1,107 @@
+20/ 21
+(for 21 make k=4)
+
+
+import pandas as pd
+import numpy as np
+
+# Load the Iris dataset from the provided file path
+iris_df = pd.read_csv(r"C:\Users\bhush\OneDrive\Desktop\Dataset\IRIS.csv")
+
+# Consider only the numeric features for clustering
+features = iris_df.iloc[:, :-1].values  # Exclude the 'species' column
+
+# Number of clusters (K)
+K = 3
+
+# Initialize cluster means randomly as one of the data points
+np.random.seed(42)  # For reproducibility
+initial_means_indices = np.random.choice(features.shape[0], K, replace=False)
+cluster_means = features[initial_means_indices]
+
+# Function to calculate Euclidean distance
+def euclidean_distance(a, b):
+    return np.sqrt(np.sum((a - b) ** 2))
+
+# Perform K-means clustering
+for iteration in range(10):
+    # Step 1: Assign each point to the nearest cluster mean
+    clusters = [[] for _ in range(K)]
+    for point in features:
+        distances = [euclidean_distance(point, mean) for mean in cluster_means]
+        closest_cluster = np.argmin(distances)
+        clusters[closest_cluster].append(point)
+    
+    # Step 2: Update cluster means
+    new_cluster_means = []
+    for cluster in clusters:
+        if cluster:  # Avoid division by zero
+            new_cluster_means.append(np.mean(cluster, axis=0))
+        else:
+            # Handle empty clusters by reinitializing randomly
+            new_cluster_means.append(features[np.random.choice(features.shape[0])])
+    cluster_means = np.array(new_cluster_means)
+
+# Print the final cluster means
+print("Final cluster means after 10 iterations:")
+for i, mean in enumerate(cluster_means):
+    print(f"Cluster {i + 1} mean: {mean}")
+
+
+
+
+
+
+
+
+
+Explanation
+Step 3: K-means Clustering
+Iterations Overview:
+For 10 iterations, two main steps are repeated:
+Assign points to the nearest cluster mean.
+Update cluster means based on the points assigned to each cluster.
+Step 3.1: Assign Points to Clusters
+For each point:
+
+Calculate its distance to all cluster means.
+Assign the point to the cluster with the closest mean (smallest distance).
+For example:
+
+Suppose cluster means are m1, m2, and m3.
+A point p has distances [d1, d2, d3] to the cluster means.
+Assign p to the cluster corresponding to the smallest d.
+Example Dry Run (First Iteration, Hypothetical Data):
+Cluster means (initial):
+m1 = [5.0, 3.5, 1.4, 0.2], m2 = [6.0, 3.0, 4.0, 1.3], m3 = [6.5, 3.0, 5.5, 2.0].
+Point p = [5.1, 3.4, 1.5, 0.2]:
+Distances:
+d1 = euclidean_distance(p, m1) = 0.141,
+d2 = euclidean_distance(p, m2) = 2.8,
+d3 = euclidean_distance(p, m3) = 4.2.
+Closest cluster: Cluster 1 (m1).
+This process is repeated for all points, grouping them into clusters.
+
+Step 3.2: Update Cluster Means
+For each cluster:
+
+Compute the mean of all points assigned to that cluster.
+Replace the old cluster mean with the new mean.
+If a cluster is empty (no points assigned), reinitialize its mean randomly.
+
+Dry Run Example (First Iteration Update):
+Suppose:
+Points assigned to Cluster 1: [[5.0, 3.5, 1.4, 0.2], [5.1, 3.4, 1.5, 0.2]].
+Points assigned to Cluster 2: [[6.0, 3.0, 4.0, 1.3], [5.9, 3.1, 4.2, 1.5]].
+Points assigned to Cluster 3: [[6.5, 3.0, 5.5, 2.0]].
+New means:
+m1 = mean(Cluster 1) = [5.05, 3.45, 1.45, 0.2].
+m2 = mean(Cluster 2) = [5.95, 3.05, 4.1, 1.4].
+m3 = mean(Cluster 3) = [6.5, 3.0, 5.5, 2.0].
+Step 4: Final Cluster Means
+After 10 iterations, the cluster means converge (usually minimal or no change in means). These are the final cluster centers.
+
+Key Points in the Code
+Cluster Assignment: Uses distances to determine the nearest cluster.
+Updating Means: Computes the mean for each cluster and reassigns it.
+Handling Empty Clusters: If a cluster has no points, its mean is reinitialized randomly to avoid errors.

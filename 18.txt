@@ -1,0 +1,126 @@
+18
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt 
+data = pd.read_csv(r"C:\Users\bhush\OneDrive\Desktop\Dataset\House Data.csv")
+print(data.head())
+
+# for column in data.select_dtypes(include=[np.number]).columns:
+#     print(f"feature: {column}")
+#     print(f"standard deviation: {data[column].std()}")
+#     print(f"variance: {data[column].var()}")
+#     print(f"25th percentile: {data[column].quantile(0.25)}")
+#     print(f"50th percentile: (median) {data[column].quantile(0.5)}")
+#     print(f"75th percentile: {data[column].quantile(0.75)}")
+#     print("-"*40)
+
+# for column in data.columns:
+#     if data[column].dtype in ['int64', 'float64']:
+#         plt.hist(data[column], bins=20, color='blue', edgecolor='black', alpha=0.7)
+#     else:
+#         data[column].value_counts().plot(kind='bar', color='green', alpha=0.7)
+#     plt.title(f"histogram for {column}")
+#     plt.xlabel(column)
+#     plt.ylabel("frequency")
+#     plt.grid(axis='y')
+#     plt.tight_layout()
+#     plt.show()
+
+categorical_cols = data.select_dtypes(include=['object']).columns
+quantitative_cols = data.select_dtypes(include=['number']).columns
+print(categorical_cols)
+print(quantitative_cols)
+
+summary_stats={}
+for cat_col in categorical_cols:
+    for quant_cols in quantitative_cols:
+        grouped_stats = data.groupby(cat_col)[quant_cols].agg(['mean', 'median', 'min', 'max', 'std']).reset_index()
+        summary_stats[f'{quant_cols}_by_{cat_col}'] = grouped_stats
+
+for key, value in summary_stats.items():
+    print(f"\nSummary statistics of {key}:")
+    print(value)
+
+
+
+
+
+
+or 
+
+
+
+
+import pandas as pd
+
+# Load the dataset
+file_path = r"C:\Users\bhush\OneDrive\Desktop\Dataset\House Data.csv"
+data = pd.read_csv(file_path)
+
+# Define categorical and quantitative variables
+categorical_variable = 'district'  # Categorical column: district
+quantitative_variable = 'price'    # Quantitative column: price
+
+# Clean the quantitative variable (remove non-numeric characters and convert to numeric)
+data[quantitative_variable] = (
+    data[quantitative_variable]
+    .str.replace(r"[^\d.]", "", regex=True)  # Remove non-numeric characters
+    .astype(float)  # Convert to numeric
+)
+
+# Group by the categorical variable and calculate summary statistics for the quantitative variable
+grouped_data = data.groupby(categorical_variable)[quantitative_variable]
+summary = grouped_data.agg(
+    Mean='mean',
+    Median='median',
+    Min='min',
+    Max='max',
+    StdDev='std'
+)
+
+# Display the summary statistics
+print("\nSummary Statistics by District:")
+print(summary)
+
+
+or 
+
+
+import pandas as pd
+
+# Load the dataset
+file_path = r"C:\Users\bhush\OneDrive\Desktop\Dataset\House Data.csv"  # Replace with your file path
+df = pd.read_csv(file_path)
+
+# Clean the 'price' column by removing non-numeric characters
+df['price'] = df['price'].str.replace(r'[^0-9.]', '', regex=True)
+
+# Convert 'price' column to numeric (force errors to NaN if conversion fails)
+df['price'] = pd.to_numeric(df['price'], errors='coerce')
+
+# Clean 'GrossSquareMeters' to retain numeric values
+df['GrossSquareMeters'] = df['GrossSquareMeters'].str.replace(" m2", "").astype(float)
+
+# Clean 'BuildingAge' to handle special cases like '0 (Yeni)' and ranges
+def clean_building_age(age):
+    if isinstance(age, str):
+        # Remove any non-numeric characters (e.g., '0 (Yeni)' -> '0')
+        age = ''.join(filter(str.isdigit, age))
+        if '-' in age:  # If there's a range like '5-10'
+            start, end = age.split('-')
+            return (float(start) + float(end)) / 2
+        elif 'Ve Üzeri' in age:  # Handling values like '21 Ve Üzeri'
+            return 21
+    return float(age)  # For direct numeric values
+
+df['BuildingAge'] = df['BuildingAge'].apply(clean_building_age)
+
+# Group by 'BuildingAge' and compute summary statistics for 'price'
+price_stats_by_age = df.groupby('BuildingAge')['price'].agg(['mean', 'median', 'min', 'max', 'std'])
+print("\nSummary Statistics for 'price' grouped by 'BuildingAge':\n", price_stats_by_age)
+
+# Group by 'BuildingAge' and compute summary statistics for 'GrossSquareMeters'
+area_stats_by_age = df.groupby('BuildingAge')['GrossSquareMeters'].agg(['mean', 'median', 'min', 'max', 'std'])
+print("\nSummary Statistics for 'GrossSquareMeters' grouped by 'BuildingAge':\n", area_stats_by_age)

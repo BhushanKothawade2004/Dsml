@@ -1,0 +1,29 @@
+2
+
+
+# Import necessary libraries
+import pandas as pd
+
+path = r"C:\Users\bhush\OneDrive\Desktop\Dataset\Telecom Churn.csv"
+telecom_csv = pd.read_csv(path)
+
+print("Minimum values: \n", telecom_csv.min())
+
+print("Minimum values: \n", telecom_csv.min(numeric_only=True))
+
+print("Maximum Values : \n")
+print(telecom_csv.max(numeric_only=True))
+
+print("Mean: \n")
+print(telecom_csv.mean(numeric_only=True))
+
+numeric_columns = telecom_csv.select_dtypes(include=["number"])
+data_range = numeric_columns.max() - numeric_columns.min()
+print("Range: \n")
+print(data_range)
+
+print("\nStandard deviation values:\n", telecom_csv.std(numeric_only=True))
+
+numeric_columns = telecom_csv.select_dtypes(include=["number"])
+percentile = numeric_columns.quantile([0.25, 0.5, 0.75])
+print(percentile)

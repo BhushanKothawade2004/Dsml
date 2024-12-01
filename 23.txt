@@ -1,0 +1,157 @@
+23
+
+
+
+import pandas as pd
+import numpy as np
+
+# Creating the dataset
+data = {
+    'Age': ['Young', 'Young', 'Middle', 'Old', 'Old', 'Old', 'Middle', 'Young', 'Young', 'Old', 'Young', 'Middle', 'Middle', 'Old'],
+    'Income': ['High', 'High', 'High', 'Medium', 'Low', 'Low', 'Low', 'Medium', 'Low', 'Medium', 'Medium', 'Medium', 'High', 'Medium'],
+    'Married': ['No', 'No', 'No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No'],
+    'Health': ['Fair', 'Good', 'Fair', 'Fair', 'Fair', 'Good', 'Good', 'Fair', 'Fair', 'Fair', 'Good', 'Good', 'Fair', 'Good'],
+    'Class': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No']
+}
+
+df = pd.DataFrame(data)
+print(df.head())
+
+frequency_table = df.groupby('Age')['Class'].value_counts().unstack().fillna(0)
+print("Frequency Table for Age:\n", frequency_table)
+
+def entropy(probs):
+    return -sum([p * np.log2(p) for p in probs if p != 0])
+
+def entropy_of_dataset(df):
+    class_counts = df['Class'].value_counts()
+    probs = class_counts/len(df)
+    return entropy(probs)
+
+def entropy_of_attributes(df, attribute):
+    attribute_entropy = 0
+    values = df[attribute].unique()
+    for value in values:
+        subset = df[df[attribute]==value]
+        subset_entropy = entropy_of_dataset(subset)
+        attribute_entropy += (len(subset)/len(df))*subset_entropy
+    return attribute_entropy
+
+def info_gain(df,attribute):
+    total_entropy = entropy_of_dataset(df)
+    attribute_entropy = entropy_of_attributes(df, attribute)
+    return total_entropy-attribute_entropy
+
+info_gain_age = info_gain(df,'Age')
+print(f"Information gain for age: {info_gain_age:.4f}")
+
+
+
+explanation 
+
+2.This calculates the frequency of Class values (No, Yes) for each Age category:
+
+groupby('Age'): Groups rows by the Age column (Young, Middle, Old).
+['Class'].value_counts(): Counts occurrences of Class values (No, Yes) within each group.
+.unstack(): Converts the grouped result into a 2D table with Age as rows and Class values (No, Yes) as columns.
+.fillna(0): Fills missing values with 0 for categories where a particular class is absent.
+
+3. Entropy Calculation
+(a) Entropy of the Entire Dataset
+Count Class values:
+
+No: 6
+Yes: 8
+
+Compute probabilities:
+
+P(No) = 6 / 14 = 0.4286
+P(Yes) = 8 / 14 = 0.5714
+
+Apply entropy formula:
+
+Entropy = -(P(No) * log2(P(No)) + P(Yes) * log2(P(Yes)))
+= -(0.4286 * log2(0.4286) + 0.5714 * log2(0.5714))
+≈ 0.9852
+
+(b) Entropy for Each Age Group
+python
+Copy code
+for value in df['Age'].unique():
+    subset = df[df['Age'] == value]
+    subset_entropy = entropy_of_dataset(subset)
+Young:
+No: 3, Yes: 2 → Probabilities: P(No) = 3/5, P(Yes) = 2/5
+Entropy = -(3/5 * log2(3/5) + 2/5 * log2(2/5)) ≈ 0.9709
+
+Middle:
+No: 1, Yes: 4 → Probabilities: P(No) = 1/5, P(Yes) = 4/5
+Entropy = -(1/5 * log2(1/5) + 4/5 * log2(4/5)) ≈ 0.7219
+
+Old:
+No: 2, Yes: 3 → Probabilities: P(No) = 2/5, P(Yes) = 3/5
+Entropy = -(2/5 * log2(2/5) + 3/5 * log2(3/5)) ≈ 0.9709
+(c) Weighted Entropy for Age
+python
+Copy code
+attribute_entropy += (len(subset) / len(df)) * subset_entropy
+Compute the weighted entropy of splitting by Age:
+
+Young: (5/14) * 0.9709 ≈ 0.3461
+Middle: (5/14) * 0.7219 ≈ 0.2585
+Old: (4/14) * 0.9709 ≈ 0.2774
+Total weighted entropy = 0.3461 + 0.2585 + 0.2774 ≈ 0.8820
+
+4. Information Gain
+python
+Copy code
+info_gain = total_entropy - attribute_entropy
+Total entropy (dataset): 0.9852
+Entropy after splitting on Age: 0.8820
+Information gain = 0.9852 - 0.8820 ≈ 0.1032
+
+
+fromulas
+
+Entropy Entropy measures the uncertainty or impurity in a dataset. The formula is:
+H(S) = - Σ(Pi * log2(Pi))
+
+Where:
+
+S: The dataset or subset being analyzed.
+Pi: Probability of class i in the dataset S, calculated as: Pi = Count of class i / Total count in S
+n: Number of unique classes in the dataset.
+Key Notes:
+
+H(S) is measured in bits.
+If all instances belong to the same class, H(S) = 0 (pure dataset).
+If classes are uniformly distributed, H(S) is maximum.
+Entropy of Attributes For an attribute A with v unique values, the weighted entropy is calculated as:
+H(S, A) = Σ( |Sj| / |S| * H(Sj) )
+
+Where:
+
+Sj: Subset of S where the attribute A has value j.
+|Sj|: Number of instances in Sj.
+|S|: Total number of instances in S.
+H(Sj): Entropy of the subset Sj.
+Information Gain Information gain measures how much the entropy is reduced by splitting the dataset based on an attribute A. The formula is:
+IG(S, A) = H(S) - H(S, A)
+
+Where:
+
+H(S): Entropy of the entire dataset S before splitting.
+H(S, A): Weighted entropy of the dataset after splitting by A.
+Key Notes:
+
+IG(S, A) quantifies the reduction in uncertainty when splitting by A.
+A higher IG(S, A) indicates that A is a better attribute for splitting.
+
+
+
+
+
+
+
+
+

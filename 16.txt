@@ -1,0 +1,26 @@
+16
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load the Titanic dataset (you can replace the path with your actual file path)
+titanic = sns.load_dataset('titanic')
+
+# Check for minimum and maximum fare range
+min_fare = titanic['fare'].min()
+max_fare = titanic['fare'].max()
+
+# Print the fare range
+print(f"Fare range: Min = {min_fare}, Max = {max_fare}")
+
+# Plot the histogram for the 'fare' column
+plt.figure(figsize=(10, 6))
+sns.histplot(titanic['fare'], kde=True, bins=30, color='blue', edgecolor='black')
+plt.title('Distribution of Ticket Prices (Fare) on the Titanic', fontsize=15)
+plt.xlabel('Fare', fontsize=12)
+plt.ylabel('Frequency', fontsize=12)
+plt.grid(True)
+plt.show()
+
+

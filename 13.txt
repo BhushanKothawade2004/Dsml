@@ -1,0 +1,27 @@
+13
+ 
+
+
+import pandas as pd
+
+# Load the COVID vaccine statewise dataset
+file_path = r"C:\Users\bhush\OneDrive\Desktop\Dataset\Covid Vaccine Statewise.csv"
+vaccine_data = pd.read_csv(file_path)
+
+# Configure Pandas to display numbers with commas instead of scientific notation
+pd.options.display.float_format = '{:,.0f}'.format
+
+# a. Describe the dataset
+print("Dataset Description:")
+print(vaccine_data.describe())
+
+# b. Number of persons state-wise vaccinated for the first dose
+print("\nNumber of persons state-wise vaccinated for the first dose:")
+first_dose_vaccination = vaccine_data[['State', 'First Dose Administered']].groupby('State').sum()
+print(first_dose_vaccination)
+
+# c. Number of persons state-wise vaccinated for the second dose
+print("\nNumber of persons state-wise vaccinated for the second dose:")
+second_dose_vaccination = vaccine_data[['State', 'Second Dose Administered']].groupby('State').sum()
+print(second_dose_vaccination)
+

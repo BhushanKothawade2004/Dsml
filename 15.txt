@@ -1,0 +1,110 @@
+15
+
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the Titanic dataset from the given path
+titanic_df = pd.read_csv(r"C:\Users\bhush\OneDrive\Desktop\Dataset\Titanic.csv")
+
+# 1. Distribution of Survived passengers
+plt.figure(figsize=(6, 4))
+sns.countplot(data=titanic_df, x="Survived", palette="pastel")
+plt.title("Survival Count")
+plt.xlabel("Survived (1 = Yes, 0 = No)")
+plt.ylabel("Count")
+plt.show()
+
+# 2. Survival rate by gender
+plt.figure(figsize=(6, 4))
+sns.countplot(data=titanic_df, x="Sex", hue="Survived", palette="pastel")
+plt.title("Survival by Gender")
+plt.xlabel("Gender")
+plt.ylabel("Count")
+plt.legend(title="Survived")
+plt.show()
+
+# 3. Survival rate across passenger classes
+plt.figure(figsize=(6, 4))
+sns.countplot(data=titanic_df, x="Pclass", hue="Survived", palette="pastel")
+plt.title("Survival by Passenger Class")
+plt.xlabel("Passenger Class")
+plt.ylabel("Count")
+plt.legend(title="Survived")
+plt.show()
+
+# 4. Age distribution of survivors and non-survivors
+plt.figure(figsize=(8, 5))
+sns.histplot(data=titanic_df, x="Age", hue="Survived", kde=True, palette="pastel", bins=10)
+plt.title("Age Distribution by Survival")
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.show()
+
+# 5. Fare distribution by survival
+plt.figure(figsize=(8, 5))
+sns.boxplot(data=titanic_df, x="Survived", y="Fare", palette="pastel")
+plt.title("Fare Distribution by Survival")
+plt.xlabel("Survived (1 = Yes, 0 = No)")
+plt.ylabel("Fare")
+plt.show()
+
+# 6. Survival rate by port of embarkation
+plt.figure(figsize=(6, 4))
+sns.countplot(data=titanic_df, x="Embarked", hue="Survived", palette="pastel")
+plt.title("Survival by Port of Embarkation")
+plt.xlabel("Embarked (Q, S, etc.)")
+plt.ylabel("Count")
+plt.legend(title="Survived")
+plt.show()
+
+
+
+
+explanation 
+Seaborn Library Overview
+Seaborn is a powerful Python data visualization library based on Matplotlib. It provides a high-level interface for drawing attractive and informative statistical graphics
+
+1. Survival Count Plot
+python
+Copy code
+sns.countplot(data=titanic_df, x="Survived", palette="pastel")
+X-axis: Survived — This represents whether a passenger survived (1) or not (0).
+Y-axis: Count of passengers — The total number of passengers that survived (1) or did not survive (0).
+What it shows: This plot shows the distribution of survival status across all passengers. It highlights how many passengers survived (1) and how many didn't (0).
+2. Survival by Gender
+python
+Copy code
+sns.countplot(data=titanic_df, x="Sex", hue="Survived", palette="pastel")
+X-axis: Sex — This represents the gender of the passengers, where male (male) and female (female) are categories.
+Y-axis: Count of passengers — This shows how many passengers of each gender survived or did not survive.
+What it shows: This plot compares the survival rate between male and female passengers, with color differentiating those who survived and those who did not.
+3. Survival by Passenger Class
+python
+Copy code
+sns.countplot(data=titanic_df, x="Pclass", hue="Survived", palette="pastel")
+X-axis: Pclass — The class of the passenger (1st, 2nd, or 3rd class).
+Y-axis: Count of passengers — The number of passengers in each class that survived or did not survive.
+What it shows: This graph shows survival rates for each class of passenger. It helps in identifying if passengers in higher classes (1st class) had a higher chance of survival.
+4. Age Distribution by Survival
+python
+Copy code
+sns.histplot(data=titanic_df, x="Age", hue="Survived", kde=True, palette="pastel", bins=10)
+X-axis: Age — The age of the passengers, typically a continuous variable.
+Y-axis: Frequency (number of passengers) — How many passengers fall into each age range.
+What it shows: This histogram visualizes the distribution of passenger ages, with a distinction between those who survived and those who did not. The kde=True adds a kernel density estimate to smooth the distribution. This plot helps understand how age correlates with survival.
+5. Fare Distribution by Survival
+python
+Copy code
+sns.boxplot(data=titanic_df, x="Survived", y="Fare", palette="pastel")
+X-axis: Survived — Whether the passenger survived (1) or not (0).
+Y-axis: Fare — The fare paid by the passenger to board the Titanic.
+What it shows: This boxplot visualizes the fare distribution for those who survived and those who did not. It helps in comparing the fare prices for both groups, identifying whether those who survived paid more or less than those who did not.
+6. Survival by Port of Embarkation
+python
+Copy code
+sns.countplot(data=titanic_df, x="Embarked", hue="Survived", palette="pastel")
+X-axis: Embarked — The port from which the passengers boarded the Titanic (e.g., C, Q, S).
+Y-axis: Count of passengers — The number of passengers who boarded at each port and survived or did not survive.
+What it shows: This plot compares the survival rates for passengers boarding at different ports. It can show if certain ports had better survival rates than others.

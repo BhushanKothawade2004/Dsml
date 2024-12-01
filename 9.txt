@@ -1,0 +1,60 @@
+9
+
+
+import numpy as np
+
+# Define points and initial centroids
+points = {
+    "P1": [0.1, 0.6],
+    "P2": [0.15, 0.71],
+    "P3": [0.08, 0.9],
+    "P4": [0.16, 0.85],
+    "P5": [0.2, 0.3],
+    "P6": [0.25, 0.5],
+    "P7": [0.24, 0.1],
+    "P8": [0.3, 0.2]
+}
+
+# Initial centroids
+m1 = points["P1"]  # Cluster 1 centroid
+m2 = points["P8"]  # Cluster 2 centroid
+
+def euclidean_distance(p1, p2):
+    """Calculate Euclidean distance between two points."""
+    return np.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
+
+def assign_clusters(points, centroid1, centroid2):
+    """Assign points to the nearest centroid."""
+    clusters = {"C1": [], "C2": []}
+    for point, coords in points.items():
+        d1 = euclidean_distance(coords, centroid1)
+        d2 = euclidean_distance(coords, centroid2)
+        if d1 < d2:
+            clusters["C1"].append(point)
+        else:
+            clusters["C2"].append(point)
+    return clusters
+
+def update_centroid(cluster_points, points):
+    """Update centroid based on the mean of cluster points."""
+    cluster_coords = [points[point] for point in cluster_points]
+    return np.mean(cluster_coords, axis=0).tolist()
+
+# Step 1: Perform clustering
+clusters = assign_clusters(points, m1, m2)
+
+# Step 2: Update centroids
+new_m1 = update_centroid(clusters["C1"], points)
+new_m2 = update_centroid(clusters["C2"], points)
+
+# Step 3: Answer the questions
+p6_cluster = "C1" if "P6" in clusters["C1"] else "C2"
+m2_population = len(clusters["C2"])
+
+# Output
+print(f"1] P6 belongs to: {p6_cluster}")
+print(f"2] Population of cluster around m2: {m2_population}")
+print(f"3] Updated centroids: m1={new_m1}, m2={new_m2}")
+print("\nPoints in each cluster:")
+print(f"C1: {clusters['C1']} -> Centroid: {new_m1}")
+print(f"C2: {clusters['C2']} -> Centroid: {new_m2}")

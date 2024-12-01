@@ -1,0 +1,55 @@
+24
+
+import pandas as pd
+import numpy as np
+
+# Sample dataset
+data = {
+    "Name": ["Alice", "Bob", "Charlie", "David", "Edward", np.nan],
+    "Age": [25, 30, 35, 40, np.nan, 28],
+    "Salary": [50000, 54000, np.nan, 58000, 62000, 58000],
+    "Department": ["HR", "IT", "Finance", "IT", "HR", "Finance"]
+}
+
+df = pd.DataFrame(data)
+
+# 1. Counting unique values for each column
+print("Unique values count for each column:")
+for col in df.columns:
+    unique_count = df[col].nunique()
+    print(f"{col}: {unique_count}")
+
+print("\n")
+
+# 2. Checking the data types of each column
+print("Column data types:")
+print(df.dtypes)
+print("\n")
+
+# 3. Converting data type of columns (e.g., float to int)
+# Before conversion
+print("Data types before conversion:")
+print(df.dtypes)
+
+# Converting 'Age' and 'Salary' from float to int
+df['Age'] = df['Age'].fillna(0).astype(int)
+df['Salary'] = df['Salary'].fillna(0).astype(int)
+
+# After conversion
+print("\nData types after conversion:")
+print(df.dtypes)
+print("\n")
+
+# 4. Identifying missing values
+print("Missing values in each column:")
+print(df.isnull().sum())
+print("\n")
+
+# 5. Filling missing values
+# Fill missing values with specific values
+df['Name'] = df['Name'].fillna("Unknown")
+df['Age'] = df['Age'].replace(0, df['Age'].mean())
+df['Salary'] = df['Salary'].replace(0, df['Salary'].mean())
+
+print("Data after filling missing values:")
+print(df)

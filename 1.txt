@@ -1,0 +1,40 @@
+1
+
+
+
+
+# Import necessary libraries
+import pandas as pd
+
+# 1. Read data from different formats
+# Assuming Titanic dataset is available as "titanic_data.csv" and "titanic_data.xlsx"
+
+# Read CSV file
+csv_path = "titanic_data.csv"  # Replace with your file path
+titanic_from_csv = pd.read_csv(r"C:\Users\bhush\OneDrive\Desktop\Dataset\Titanic.csv")
+
+# Display the first few rows from each format
+print("Data from CSV:")
+print(titanic_from_csv.head())
+
+# 2. Indexing and Selecting Data
+# Example: Select passengers who survived (Survived = 1)
+survived_passengers = titanic_from_csv[titanic_from_csv["Survived"] == 1]
+print("\nPassengers who survived:")
+print(survived_passengers)
+
+# 3. Sort Data
+# Sort by 'Fare' in ascending order
+sorted_by_fare = titanic_from_csv.sort_values(by="Fare")
+print("\nData sorted by Fare (ascending):")
+print(sorted_by_fare)
+
+# 4. Describe Attributes of Data
+data_summary = titanic_from_csv.describe(include="all")
+print("\nSummary of data attributes:")
+print(data_summary)
+
+# 5. Check Data Types of Each Column
+data_types = titanic_from_csv.dtypes
+print("\nData types of each column:")
+print(data_types)

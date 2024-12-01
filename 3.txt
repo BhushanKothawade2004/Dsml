@@ -1,0 +1,42 @@
+3
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the House_Price Prediction dataset (replace with your file path)
+file_csv = r"C:\Users\bhush\OneDrive\Desktop\Dataset\House Data.csv"
+
+data = pd.read_csv(file_csv)
+print("\nData loaded successfully from CSV.\n")
+
+# Remove any "Unnamed" columns that could be caused by an index or extra columns
+data = data.loc[:, ~data.columns.str.contains('^Unnamed')]
+
+# Display the first few rows to verify the removal
+print(data.head())
+
+# Clean 'price' column (if needed): Remove any non-numeric characters (like currency symbols)
+if 'price' in data.columns:
+    data['price'] = data['price'].replace(r"[^0-9.]", "", regex=True).astype(float)
+
+# Compute and display standard deviation, variance, and percentiles for each numerical feature
+for column in data.select_dtypes(include=['float64', 'int64']):  # Considering only numerical columns
+    print(f"\nStatistics for '{column}':")
+    print(f"Standard Deviation: {data[column].std()}")
+    print(f"Variance: {data[column].var()}")
+    print(f"25th Percentile: {data[column].quantile(0.25)}")
+    print(f"50th Percentile (Median): {data[column].median()}")
+    print(f"75th Percentile: {data[column].quantile(0.75)}")
+
+
+# Create histograms for each numerical feature
+print("\nGenerating histograms for numerical features...\n")
+for column in data.select_dtypes(include=['float64', 'int64']):
+    plt.figure(figsize=(8, 5))
+    plt.hist(data[column], bins=30, color='skyblue', edgecolor='black', alpha=0.7)
+    plt.title(f"Histogram of {column}")
+    plt.xlabel(column)
+    plt.ylabel("Frequency")
+    plt.grid(axis='y', alpha=0.75)
+    plt.show()

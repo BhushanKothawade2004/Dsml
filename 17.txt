@@ -1,0 +1,55 @@
+17
+
+
+
+# Given values
+TP = 1
+FN = 8
+FP = 1
+TN = 90
+
+# Compute Accuracy
+accuracy = (TP + TN) / (TP + TN + FP + FN)
+
+# Compute Error Rate
+error_rate = (FP + FN) / (TP + TN + FP + FN)
+
+# Compute Precision
+precision = TP / (TP + FP)
+
+# Compute Recall
+recall = TP / (TP + FN)
+
+# Print the results
+print(f"Accuracy: {accuracy:.2f}")
+print(f"Error Rate: {error_rate:.2f}")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+
+
+
+
+
+
+Explanation of Metrics:
+
+Accuracy:
+
+Definition: Proportion of correctly classified instances (both positives and negatives) to the total number of instances.
+Formula:
+Accuracy = (TP + TN) / (TP + FP + FN + TN)
+Error Rate:
+
+Definition: Proportion of misclassified instances (false positives and false negatives) to the total number of instances.
+Formula:
+Error Rate = (FP + FN) / (TP + FP + FN + TN)
+Precision:
+
+Definition: Proportion of correctly predicted positive instances to all predicted positive instances.
+Formula:
+Precision = TP / (TP + FP)
+Recall (Sensitivity):
+
+Definition: Proportion of actual positives that are correctly identified.
+Formula:
+Recall = TP / (TP + FN)

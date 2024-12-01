@@ -1,0 +1,47 @@
+6
+
+
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.preprocessing import LabelEncoder
+
+# Step 1: Load the dataset
+path = r"C:\Users\bhush\OneDrive\Desktop\Dataset\Lipstick.csv"
+lipstick_data = pd.read_csv(path)
+
+# Step 2: Preprocess the dataset
+# Initialize separate LabelEncoders for each column
+encoders = {}
+
+for column in ['Age', 'Income', 'Gender', 'Ms', 'Buys']:
+    le = LabelEncoder()
+    lipstick_data[column] = le.fit_transform(lipstick_data[column])
+    encoders[column] = le  # Store the encoder for each column
+
+# Step 3: Define features and target
+X = lipstick_data[['Age', 'Income', 'Gender', 'Ms']]  # Features
+y = lipstick_data['Buys']  # Target variable
+
+# Step 4: Build the Decision Tree
+clf = DecisionTreeClassifier(random_state=42)
+clf.fit(X, y)
+
+# Step 5: Prepare Test Data
+# Test data: [Age > 35, Income = Medium, Gender = Female, Marital Status = Married]
+test_data_raw = {
+    'Age': '>35',
+    'Income': 'Medium',
+    'Gender': 'Female',
+    'Ms': 'Married'
+}
+
+# Encode test data using the saved encoders
+test_data = {col: encoders[col].transform([value])[0] for col, value in test_data_raw.items()}
+test_df = pd.DataFrame([test_data])
+
+# Step 6: Make a prediction
+prediction = clf.predict(test_df)
+
+# Decode the prediction to the original label
+prediction_label = encoders['Buys'].inverse_transform(prediction)
+print(f"The decision for the test data is: {prediction_label[0]}")

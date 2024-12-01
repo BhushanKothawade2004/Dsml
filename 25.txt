@@ -1,0 +1,91 @@
+25
+
+
+
+
+import pandas as pd
+
+# Step 1: Create a sample DataFrame
+# This DataFrame contains employee data with missing values and various data types.
+data = {
+    'ID': [1, 2, 3, 4, 5, 6],
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Edward', 'Frank'],
+    'Age': [24, 27, None, 22, 23, None],  # Age column has missing values
+    'Salary': [50000, 60000, 55000, None, 52000, 58000],  # Salary column has missing values
+    'JoinDate': ['2020-01-15', '2019-07-23', '2018-03-12', '2021-09-05', '2022-11-01', '2019-02-28'],  # Joining dates as strings
+    'Department': ['HR', 'IT', 'Finance', 'HR', None, 'IT']  # Department column has a missing value
+}
+
+# Convert dictionary into a DataFrame
+df = pd.DataFrame(data)
+
+# Step 2: Identify missing values
+# `isnull().sum()` calculates the count of missing values in each column.
+missing_values = df.isnull().sum()
+
+# Select only columns with missing values for better focus
+columns_missing = missing_values[missing_values > 0]
+
+# Print missing values information
+print("Missing Values in Each Column:")
+print(missing_values)
+print("\nColumns with Missing Values:")
+print(columns_missing)
+
+# Step 3: Fill missing values
+# Replace missing values in 'Age' with the mean of the column
+df['Age'].fillna(df['Age'].mean(), inplace=True)
+
+# Replace missing values in 'Salary' with the mean of the column
+df['Salary'].fillna(df['Salary'].mean(), inplace=True)
+
+# Replace missing values in 'Department' with the mode (most frequent value) of the column
+df['Department'].fillna(df['Department'].mode()[0], inplace=True)
+
+# Display the updated DataFrame after handling missing values
+print("\nDataFrame After Filling Missing Values:")
+print(df)
+
+# Step 4: Check for duplicate rows
+# `duplicated()` identifies rows that are exact duplicates of previous rows.
+duplicates = df.duplicated()
+
+# Print duplicate row information (True if duplicate, False otherwise)
+print("\nDuplicate Rows:")
+print(duplicates)
+
+# Remove duplicate rows from the DataFrame
+# `drop_duplicates()` removes all duplicate rows, keeping the first occurrence.
+df.drop_duplicates(inplace=True)
+
+# Step 5: Convert 'JoinDate' column to a datetime object
+# Ensures that date values are correctly interpreted for further operations.
+df['JoinDate'] = pd.to_datetime(df['JoinDate'])
+
+# Print the updated data types of all columns
+print("\nData Types After Converting 'JoinDate':")
+print(df.dtypes)
+
+# Step 6: Calculate the number of years each employee has been at the company
+# Use the current date and subtract 'JoinDate', then convert the result to years.
+df['YearsAtCompany'] = (pd.to_datetime('today') - df['JoinDate']).dt.days // 365
+
+# Display the first few rows of the updated DataFrame
+print("\nDataFrame with 'YearsAtCompany':")
+print(df.head())
+
+# Step 7: Normalize the 'Salary' column
+# Normalize values to a range between 0 and 1 for consistency and scaling.
+df['Salary'] = (df['Salary'] - df['Salary'].min()) / (df['Salary'].max() - df['Salary'].min())
+
+# Display the DataFrame after normalization
+print("\nDataFrame After Normalizing 'Salary':")
+print(df)
+
+# Step 8: Convert categorical variable 'Department' into dummy/indicator variables
+# `pd.get_dummies()` creates separate columns for each unique value in 'Department'.
+df = pd.get_dummies(df, columns=['Department'])
+
+# Display the final DataFrame with dummy variables
+print("\nFinal DataFrame with Dummy Variables:")
+print(df)
